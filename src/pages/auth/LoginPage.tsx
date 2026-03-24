@@ -41,8 +41,10 @@ export function LoginPage() {
 			toast.success("Login bem sucedido!");
 			navigate(from, { replace: true });
 		} catch (error: any) {
-			if (error.response?.status === 400 || error.response?.status === 401) {
+			if (error.response?.status === 401) {
 				setGlobalError("E-mail ou senha incorretos.");
+			} else if (error.response?.status === 403) {
+				setGlobalError("Acesso restrito ao administrador.");
 			} else {
 				setGlobalError(
 					"Erro ao conectar com o servidor. Tente novamente mais tarde.",
