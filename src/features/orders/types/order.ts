@@ -13,19 +13,25 @@ export const orderSchema = z.object({
 	status: z.enum(["pending", "completed", "cancelled", "shipped", "delivered"]),
 	created_at: z.string().datetime(),
 	total: z.number().nonnegative(),
-	client: z.object({
-		name: z.string(),
-		email: z.string(),
-		cpf: z.string().optional(),
-		phone: z.string().optional(),
-	}).optional().nullable(),
-	address: z.object({
-		street: z.string(),
-		neighborhood: z.string().optional(),
-		city: z.string(),
-		cep: z.string().optional(),
-		complement: z.string().optional(),
-	}).optional().nullable(),
+	client: z
+		.object({
+			name: z.string(),
+			email: z.string(),
+			cpf: z.string().optional(),
+			phone: z.string().optional(),
+		})
+		.optional()
+		.nullable(),
+	address: z
+		.object({
+			street: z.string(),
+			neighborhood: z.string().optional(),
+			city: z.string(),
+			cep: z.string().optional(),
+			complement: z.string().optional(),
+		})
+		.optional()
+		.nullable(),
 	items: z.array(orderItemSchema),
 });
 

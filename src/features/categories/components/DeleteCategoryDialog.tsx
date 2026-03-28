@@ -8,6 +8,12 @@ interface DeleteCategoryDialogProps {
 	isDeleting: boolean;
 }
 
+/**
+ * Diálogo de confirmação para exclusão de uma categoria.
+ *
+ * @param {DeleteCategoryDialogProps} props - Propriedades do componente.
+ * @returns {JSX.Element} O componente de diálogo de alerta.
+ */
 export function DeleteCategoryDialog({
 	open,
 	onOpenChange,
@@ -25,7 +31,10 @@ export function DeleteCategoryDialog({
 					</AlertDialog.Title>
 					<AlertDialog.Description className="text-sm text-gray-500">
 						Tem certeza que deseja excluir a categoria{" "}
-						<span className="font-semibold text-gray-700">"{categoryName}"</span>? Esta ação não pode ser desfeita.
+						<span className="font-semibold text-gray-700">
+							"{categoryName}"
+						</span>
+						? Esta ação não pode ser desfeita.
 					</AlertDialog.Description>
 					<div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
 						<AlertDialog.Cancel asChild>

@@ -1,15 +1,13 @@
 // Pages
-export { CategoryListingPage } from "./pages/CategoryListingPage";
 
 // Components
 export { CategoryFormDialog } from "./components/CategoryFormDialog";
 export { DeleteCategoryDialog } from "./components/DeleteCategoryDialog";
-
-// Services
-export { categoryService } from "./services/categoryService";
-
 // Hooks
 export { useCategories, useCategory } from "./hooks/useCategories";
+export { CategoryListingPage } from "./pages/CategoryListingPage";
+// Services
+export { categoryService } from "./services/categoryService";
 
 // Types
 export type {

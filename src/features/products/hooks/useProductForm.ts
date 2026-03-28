@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { productSchema } from "../schemas/ProductSchema";
 import { productService } from "../services/productService";
 import type { CreateProductPayload, Product } from "../types/product";
-import { productSchema } from "../schemas/ProductSchema";
 
 interface UseProductFormParams {
 	product?: Product;
@@ -13,19 +13,25 @@ interface UseProductFormParams {
 	isEditMode: boolean;
 }
 
-export function useProductForm({ product, onSuccess, isEditMode }: UseProductFormParams) {
+export function useProductForm({
+	product,
+	onSuccess,
+	isEditMode,
+}: UseProductFormParams) {
 	const queryClient = useQueryClient();
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 	const [isUploadingImages, setIsUploadingImages] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
 
 	// Pre-fill images state for previews
-	const [existingImagesView, setExistingImagesView] = useState<{ id?: string, url: string, type: string, file?: File }[]>(
-		product?.images?.map(img => ({
+	const [existingImagesView, setExistingImagesView] = useState<
+		{ id?: string; url: string; type: string; file?: File }[]
+	>(
+		product?.images?.map((img) => ({
 			id: String(img.id),
 			url: img.path || img.content || "",
-			type: "image/existing"
-		})) ?? []
+			type: "image/existing",
+		})) ?? [],
 	);
 
 	const form = useForm<any>({
@@ -35,23 +41,26 @@ export function useProductForm({ product, onSuccess, isEditMode }: UseProductFor
 			useInMenu: product?.use_in_menu ?? false,
 			stock: product?.stock ?? 0,
 			gender: product?.gender ?? "Unisex",
-			options: product?.options?.map(opt => ({
-				...opt,
-				values: opt.values.join(", ")
-			})) ?? [],
-			categoryIds: product?.categories?.map(c => c.id) ?? [],
-			images: product?.images?.map(img => ({
-				type: "image/existing",
-				content: img.path || img.content
-			})) ?? [],
+			options:
+				product?.options?.map((opt) => ({
+					...opt,
+					values: opt.values.join(", "),
+				})) ?? [],
+			categoryIds: product?.categories?.map((c) => c.id) ?? [],
+			images:
+				product?.images?.map((img) => ({
+					type: "image/existing",
+					content: img.path || img.content,
+				})) ?? [],
 			name: product?.name ?? "",
 			slug: product?.slug ?? "",
 			brand: product?.brand ?? "",
 			description: product?.description ?? "",
 			price: product?.price ?? 0,
-			priceWithDiscount: product?.price && product?.price_with_discount
-				? Math.round((1 - (product.price_with_discount / product.price)) * 100)
-				: 0,
+			priceWithDiscount:
+				product?.price && product?.price_with_discount
+					? Math.round((1 - product.price_with_discount / product.price) * 100)
+					: 0,
 		},
 	});
 
@@ -63,10 +72,14 @@ export function useProductForm({ product, onSuccess, isEditMode }: UseProductFor
 		watch,
 		setValue,
 		setError,
-		formState: { errors, isSubmitting }
+		formState: { errors, isSubmitting },
 	} = form;
 
-	const { fields: optionFields, append: appendOption, remove: removeOption } = useFieldArray({
+	const {
+		fields: optionFields,
+		append: appendOption,
+		remove: removeOption,
+	} = useFieldArray({
 		control,
 		name: "options",
 	});
@@ -74,7 +87,9 @@ export function useProductForm({ product, onSuccess, isEditMode }: UseProductFor
 	// Watch for real-time pricing calculation
 	const priceValue = watch("price");
 	const discountPercentage = watch("priceWithDiscount");
-	const [calculatedDiscountPrice, setCalculatedDiscountPrice] = useState<number | null>(null);
+	const [calculatedDiscountPrice, setCalculatedDiscountPrice] = useState<
+		number | null
+	>(null);
 
 	useEffect(() => {
 		const basePrice = Number(priceValue);
@@ -82,7 +97,7 @@ export function useProductForm({ product, onSuccess, isEditMode }: UseProductFor
 
 		if (!isNaN(basePrice) && basePrice > 0) {
 			const safeDiscount = Math.min(Math.max(discount, 0), 100);
-			const finalPrice = basePrice - (basePrice * (safeDiscount / 100));
+			const finalPrice = basePrice - basePrice * (safeDiscount / 100);
 			setCalculatedDiscountPrice(Number(finalPrice.toFixed(2)));
 		} else {
 			setCalculatedDiscountPrice(null);
@@ -113,29 +128,36 @@ export function useProductForm({ product, onSuccess, isEditMode }: UseProductFor
 				useInMenu: product.use_in_menu,
 				stock: product.stock,
 				gender: product.gender,
-				options: product.options?.map(opt => ({
-					...opt,
-					values: opt.values.join(", ")
-				})) ?? [],
-				categoryIds: product.categories?.map(c => c.id) ?? [],
-				images: product.images?.map(img => ({
-					type: "image/existing",
-					content: img.path || img.content
-				})) ?? [],
+				options:
+					product.options?.map((opt) => ({
+						...opt,
+						values: opt.values.join(", "),
+					})) ?? [],
+				categoryIds: product.categories?.map((c) => c.id) ?? [],
+				images:
+					product.images?.map((img) => ({
+						type: "image/existing",
+						content: img.path || img.content,
+					})) ?? [],
 				name: product.name,
 				slug: product.slug,
 				brand: product.brand || "",
 				description: product.description || "",
 				price: product.price,
-				priceWithDiscount: product.price && product.price_with_discount
-					? Math.round((1 - (product.price_with_discount / product.price)) * 100)
-					: 0,
+				priceWithDiscount:
+					product.price && product.price_with_discount
+						? Math.round(
+								(1 - product.price_with_discount / product.price) * 100,
+							)
+						: 0,
 			});
-			setExistingImagesView(product.images?.map(img => ({
-				id: String(img.id),
-				url: img.path || img.content || "",
-				type: "image/existing"
-			})) ?? []);
+			setExistingImagesView(
+				product.images?.map((img) => ({
+					id: String(img.id),
+					url: img.path || img.content || "",
+					type: "image/existing",
+				})) ?? [],
+			);
 		}
 	}, [product, reset, isSuccess]);
 
@@ -146,11 +168,17 @@ export function useProductForm({ product, onSuccess, isEditMode }: UseProductFor
 				: productService.createProduct(payload),
 		onSuccess: () => {
 			setIsSuccess(true);
-			toast.success(isEditMode ? "Produto atualizado com sucesso!" : "Produto criado com sucesso!");
+			toast.success(
+				isEditMode
+					? "Produto atualizado com sucesso!"
+					: "Produto criado com sucesso!",
+			);
 
 			queryClient.invalidateQueries({ queryKey: ["products"] });
 			if (isEditMode) {
-				queryClient.invalidateQueries({ queryKey: ["product", String(product!.id)] });
+				queryClient.invalidateQueries({
+					queryKey: ["product", String(product!.id)],
+				});
 			}
 
 			// Timing delay to let the dialog close before clearing states
@@ -168,27 +196,32 @@ export function useProductForm({ product, onSuccess, isEditMode }: UseProductFor
 		onError: (error: any) => {
 			if (error.response?.status === 400 && error.response.data?.errors) {
 				const apiErrors = error.response.data.errors;
-				apiErrors.forEach((apiErr: { field: string, message: string }) => {
+				apiErrors.forEach((apiErr: { field: string; message: string }) => {
 					let fieldName = apiErr.field;
 					// Map backend snake_case to frontend camelCase if needed
-					if (fieldName === 'price_with_discount') fieldName = 'priceWithDiscount';
-					if (fieldName === 'use_in_menu') fieldName = 'useInMenu';
-					if (fieldName === 'category_ids') fieldName = 'categoryIds';
+					if (fieldName === "price_with_discount")
+						fieldName = "priceWithDiscount";
+					if (fieldName === "use_in_menu") fieldName = "useInMenu";
+					if (fieldName === "category_ids") fieldName = "categoryIds";
 
 					setError(fieldName as any, {
-						type: 'manual',
-						message: apiErr.message || 'Campo inválido'
+						type: "manual",
+						message: apiErr.message || "Campo inválido",
 					});
 				});
-				toast.error('O formulário contém campos inválidos.');
+				toast.error("O formulário contém campos inválidos.");
 			} else {
-				toast.error(isEditMode ? 'Erro ao atualizar o produto.' : 'Erro ao criar o produto.');
+				toast.error(
+					isEditMode
+						? "Erro ao atualizar o produto."
+						: "Erro ao criar o produto.",
+				);
 			}
 		},
 	});
 
 	const onSubmit = async (data: any) => {
-		let finalImages: { type: string, content: string }[] = [];
+		let finalImages: { type: string; content: string }[] = [];
 
 		// Upload das NOVAS Imagens (se houver) e montagem do array final respeitando a ORDEM do UI
 		setIsUploadingImages(true);
@@ -197,15 +230,17 @@ export function useProductForm({ product, onSuccess, isEditMode }: UseProductFor
 
 			if (selectedFiles.length > 0) {
 				const formData = new FormData();
-				selectedFiles.forEach(file => {
-					formData.append('images', file);
+				selectedFiles.forEach((file) => {
+					formData.append("images", file);
 				});
 
 				const uploadResponse = await productService.uploadImages(formData);
 				// Mapeamos o arquivo original (via URL do objeto) para a URL remota
 				selectedFiles.forEach((file: File, index: number) => {
 					// Procuramos o preview que tem este arquivo
-					const preview = existingImagesView.find((img: any) => img.file === file);
+					const preview = existingImagesView.find(
+						(img: any) => img.file === file,
+					);
 					if (preview) {
 						uploadedUrlsMap.set(preview.url, uploadResponse[index].url);
 					}
@@ -217,14 +252,14 @@ export function useProductForm({ product, onSuccess, isEditMode }: UseProductFor
 				if (img.type === "image/existing") {
 					return {
 						type: "image/existing",
-						content: img.url
+						content: img.url,
 					};
 				} else {
 					// Imagem nova, pegar a URL remota que acabamos de receber
 					const remoteUrl = uploadedUrlsMap.get(img.url);
 					return {
 						type: img.type,
-						content: remoteUrl || img.url
+						content: remoteUrl || img.url,
 					};
 				}
 			});
@@ -240,7 +275,9 @@ export function useProductForm({ product, onSuccess, isEditMode }: UseProductFor
 		const discount = Number(data.priceWithDiscount || 0);
 
 		// Always send price_with_discount to avoid keeping old discounted values on PATCH
-		const absolutePriceWithDiscount = Number((basePrice - (basePrice * (discount / 100))).toFixed(2));
+		const absolutePriceWithDiscount = Number(
+			(basePrice - basePrice * (discount / 100)).toFixed(2),
+		);
 
 		const payload: any = {
 			enabled: data.enabled,
@@ -256,22 +293,26 @@ export function useProductForm({ product, onSuccess, isEditMode }: UseProductFor
 			category_ids: data.categoryIds,
 			images: finalImages,
 			options: data.options.map((opt: any) => {
-				const values = typeof opt.values === 'string'
-					? opt.values.split(',').map((v: string) => v.trim()).filter(Boolean)
-					: opt.values;
+				const values =
+					typeof opt.values === "string"
+						? opt.values
+								.split(",")
+								.map((v: string) => v.trim())
+								.filter(Boolean)
+						: opt.values;
 
 				// Mandatory enforcement of shape based on type per API rules
 				return {
 					title: opt.title,
 					type: opt.type,
 					shape: opt.type === "color" ? "circle" : "square",
-					values: values
+					values: values,
 				};
 			}),
 		};
 
 		// Artificial delay for UI smoothness (avoid flickering for very fast connections)
-		await new Promise(resolve => setTimeout(resolve, 800));
+		await new Promise((resolve) => setTimeout(resolve, 800));
 
 		try {
 			await createProductMutation.mutateAsync(payload);
@@ -284,7 +325,9 @@ export function useProductForm({ product, onSuccess, isEditMode }: UseProductFor
 		console.error("❌ ERRO DE VALIDAÇÃO LOCAL:", errs);
 
 		const errorFields = Object.keys(errs).join(", ");
-		toast.error(`Campos inválidos: ${errorFields}. Verifique o console (F12) para detalhes.`);
+		toast.error(
+			`Campos inválidos: ${errorFields}. Verifique o console (F12) para detalhes.`,
+		);
 	};
 
 	return {

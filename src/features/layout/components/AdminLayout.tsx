@@ -19,22 +19,39 @@ const navigation = [
 	{ name: "Usuários", href: "/users", icon: Users },
 ];
 
+/**
+ * Componente de Layout Principal do Administrador.
+ * Fornece a estrutura de navegação lateral (Sidebar), o cabeçalho e a área de conteúdo principal.
+ *
+ * @returns {JSX.Element} O componente de layout administrativo com rotas filhas.
+ */
 export function AdminLayout() {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const { user, logout } = useAuth();
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-	// Fechar sidebar ao mudar de rota em dispositivos móveis
+	// Fecha automaticamente a barra lateral ao mudar de rota em dispositivos móveis
 	useEffect(() => {
 		setIsSidebarOpen(false);
 	}, [location.pathname]);
 
+	/**
+	 * Realiza o logout do usuário e redireciona para a página de login.
+	 *
+	 * @returns {Promise<void>}
+	 */
 	const handleLogout = async () => {
 		await logout();
 		navigate("/login", { replace: true });
 	};
 
+	/**
+	 * Gera as iniciais do nome do usuário logado para exibição no avatar.
+	 * Caso o usuário não possua nome/sobrenome, retorna "U" ou "A".
+	 *
+	 * @returns {string} As iniciais do usuário formatadas em caixa alta.
+	 */
 	const getUserInitials = () => {
 		if (!user) return "A";
 		return (
@@ -153,4 +170,3 @@ export function AdminLayout() {
 		</div>
 	);
 }
-

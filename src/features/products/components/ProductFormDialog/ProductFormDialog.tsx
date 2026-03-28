@@ -1,7 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { Loader2, X } from "lucide-react";
-import type { Product } from "../../types/product";
 import { useProductForm } from "../../hooks/useProductForm";
+import type { Product } from "../../types/product";
 import { ProductFormFields } from "./ProductFormFields";
 import { ProductImageUpload } from "./ProductImageUpload";
 import { ProductOptionsManager } from "./ProductOptionsManager";
@@ -12,7 +12,11 @@ interface ProductFormDialogProps {
 	product?: Product;
 }
 
-export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDialogProps) {
+export function ProductFormDialog({
+	open,
+	onOpenChange,
+	product,
+}: ProductFormDialogProps) {
 	const isEditMode = !!product;
 
 	const {
@@ -49,10 +53,12 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
 						<div className="flex flex-row items-center justify-between space-y-0">
 							<div className="space-y-1.5">
 								<Dialog.Title className="text-2xl font-black text-gray-900 tracking-tight">
-									{isEditMode ? 'Editar Produto' : 'Novo Produto'}
+									{isEditMode ? "Editar Produto" : "Novo Produto"}
 								</Dialog.Title>
 								<Dialog.Description className="text-gray-500 font-medium">
-									{isEditMode ? 'Atualize as informações do item selecionado.' : 'Cadastre um novo item no catálogo com detalhes e mídias.'}
+									{isEditMode
+										? "Atualize as informações do item selecionado."
+										: "Cadastre um novo item no catálogo com detalhes e mídias."}
 								</Dialog.Description>
 							</div>
 							<button
@@ -63,7 +69,10 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
 							</button>
 						</div>
 
-						<form onSubmit={handleSubmit(onSubmit, onFormError)} className="space-y-10 pb-4">
+						<form
+							onSubmit={handleSubmit(onSubmit, onFormError)}
+							className="space-y-10 pb-4"
+						>
 							<div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 								{/* Coluna Esquerda: Dados Principais e Mídia */}
 								<div className="lg:col-span-7 space-y-8">
@@ -101,16 +110,26 @@ export function ProductFormDialog({ open, onOpenChange, product }: ProductFormDi
 								</button>
 								<button
 									type="submit"
-									disabled={isSubmitting || isUploadingImages || createProductMutation.isPending || isSuccess}
+									disabled={
+										isSubmitting ||
+										isUploadingImages ||
+										createProductMutation.isPending ||
+										isSuccess
+									}
 									className="px-8 py-2.5 rounded-xl bg-primary text-white font-black hover:bg-tertiary transition-all shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 min-w-[180px] justify-center"
 								>
-									{(isSubmitting || isUploadingImages || createProductMutation.isPending || isSuccess) ? (
+									{isSubmitting ||
+									isUploadingImages ||
+									createProductMutation.isPending ||
+									isSuccess ? (
 										<>
 											<Loader2 className="w-5 h-5 animate-spin" />
-											{isUploadingImages ? 'Tratando Mídias...' : 'Salvando...'}
+											{isUploadingImages ? "Tratando Mídias..." : "Salvando..."}
 										</>
+									) : isEditMode ? (
+										"Salvar Alterações"
 									) : (
-										isEditMode ? 'Salvar Alterações' : 'Criar Produto'
+										"Criar Produto"
 									)}
 								</button>
 							</div>

@@ -1,13 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import { Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { useState } from "react";
-import { orderService } from "../services/orderService";
 import { OrderDetailsDialog } from "../components/OrderDetailsDialog";
 import { OrderStatusDropdown } from "../components/OrderStatusDropdown";
+import { orderService } from "../services/orderService";
 import type { Order } from "../types/order";
 
 const ITEMS_PER_PAGE = 10;
 
+/**
+ * Página de listagem e gerenciamento de pedidos realizados na Digital Store.
+ * Permite visualizar detalhes do pedido e atualizar o status de entrega/pagamento.
+ *
+ * @returns {JSX.Element} O componente da página de pedidos.
+ */
 export function OrderListingPage() {
 	const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 	const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -22,6 +28,11 @@ export function OrderListingPage() {
 		queryFn: () => orderService.getOrders(currentPage, ITEMS_PER_PAGE),
 	});
 
+	/**
+	 * Abre o diálogo de detalhes para um pedido específico.
+	 *
+	 * @param {Order} order - O pedido cujos detalhes serão exibidos.
+	 */
 	const handleViewOrder = (order: Order) => {
 		setSelectedOrder(order);
 		setIsDetailsOpen(true);
@@ -30,10 +41,16 @@ export function OrderListingPage() {
 	const totalItems = orderResponse?.total || 0;
 	const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
+	/**
+	 * Navega para a página anterior de pedidos.
+	 */
 	const handlePrevPage = () => {
 		setCurrentPage((prev) => Math.max(prev - 1, 1));
 	};
 
+	/**
+	 * Navega para a próxima página de pedidos.
+	 */
 	const handleNextPage = () => {
 		setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 	};
@@ -41,7 +58,9 @@ export function OrderListingPage() {
 	return (
 		<div className="space-y-6">
 			<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-				<h1 className="text-xl font-bold text-gray-900">Gerenciamento de Pedidos</h1>
+				<h1 className="text-xl font-bold text-gray-900">
+					Gerenciamento de Pedidos
+				</h1>
 			</div>
 
 			<OrderDetailsDialog
@@ -52,13 +71,17 @@ export function OrderListingPage() {
 
 			<div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col">
 				{isLoading ? (
-					<div className="p-8 text-center text-gray-500">Carregando pedidos...</div>
+					<div className="p-8 text-center text-gray-500">
+						Carregando pedidos...
+					</div>
 				) : isError ? (
 					<div className="p-8 text-center text-red-500">
 						Erro ao carregar pedidos. Verifique sua conexão com a API.
 					</div>
 				) : !orderResponse?.data || orderResponse.data.length === 0 ? (
-					<div className="p-8 text-center text-gray-500">Nenhum pedido encontrado.</div>
+					<div className="p-8 text-center text-gray-500">
+						Nenhum pedido encontrado.
+					</div>
 				) : (
 					<>
 						<div className="overflow-x-auto">
@@ -70,13 +93,18 @@ export function OrderListingPage() {
 										<th className="px-6 py-4 font-medium">Cliente</th>
 										<th className="px-6 py-4 font-medium">Valor Total</th>
 										<th className="px-6 py-4 font-medium">Itens</th>
-										<th className="px-6 py-4 font-medium text-center">Status</th>
+										<th className="px-6 py-4 font-medium text-center">
+											Status
+										</th>
 										<th className="px-6 py-4 font-medium text-right">Ações</th>
 									</tr>
 								</thead>
 								<tbody className="divide-y divide-gray-200">
 									{orderResponse.data.map((order) => (
-										<tr key={order.id} className="hover:bg-gray-50 transition-colors">
+										<tr
+											key={order.id}
+											className="hover:bg-gray-50 transition-colors"
+										>
 											<td className="px-6 py-4 font-medium text-gray-900">
 												#{order.id.slice(0, 8)}
 											</td>
@@ -124,10 +152,12 @@ export function OrderListingPage() {
 								<span className="text-primary font-bold">
 									{(currentPage - 1) * ITEMS_PER_PAGE + 1}
 								</span>{" "}
-								até <span className="text-primary font-bold">
+								até{" "}
+								<span className="text-primary font-bold">
 									{Math.min(currentPage * ITEMS_PER_PAGE, totalItems)}
 								</span>{" "}
-								de <span className="text-gray-900 font-bold">{totalItems}</span> pedidos
+								de <span className="text-gray-900 font-bold">{totalItems}</span>{" "}
+								pedidos
 							</div>
 
 							<div className="flex items-center gap-3">
@@ -139,11 +169,11 @@ export function OrderListingPage() {
 									<ChevronLeft className="w-4 h-4" />
 									Anterior
 								</button>
-								
+
 								<div className="flex items-center justify-center min-w-[100px] h-10 rounded-lg bg-gray-50 border border-gray-200 text-sm font-bold text-gray-900 shadow-inner">
 									Pág. {currentPage} / {totalPages}
 								</div>
-								
+
 								<button
 									onClick={handleNextPage}
 									disabled={currentPage === totalPages}

@@ -16,9 +16,12 @@ export interface CategorySearchResponse {
 
 export const categoryService = {
 	getCategories: async () => {
-		const response = await api.get<CategorySearchResponse>("/v1/category/search", {
-			params: { limit: -1 }, // Busca todas
-		});
+		const response = await api.get<CategorySearchResponse>(
+			"/v1/category/search",
+			{
+				params: { limit: -1 }, // Busca todas
+			},
+		);
 		return response.data.data;
 	},
 };

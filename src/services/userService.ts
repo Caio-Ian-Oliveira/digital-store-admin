@@ -8,7 +8,9 @@ export const userService = {
 			limit: limit.toString(),
 		});
 
-		const response = await api.get<UserListResponse>(`/v1/admin/users?${params.toString()}`);
+		const response = await api.get<UserListResponse>(
+			`/v1/admin/users?${params.toString()}`,
+		);
 		return response.data;
 	},
 };
