@@ -30,7 +30,7 @@ export function ProductOptionsManager({
 	});
 
 	return (
-		<div className="lg:col-span-5 flex flex-col gap-10 lg:border-l lg:pl-10 border-gray-100">
+		<div className="lg:col-span-5 flex flex-col gap-10 pt-10 lg:pt-0 border-t lg:border-t-0 lg:border-l lg:pl-10 border-gray-100">
 			{/* Preços e Estoque */}
 			<section className="space-y-6">
 				<h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">

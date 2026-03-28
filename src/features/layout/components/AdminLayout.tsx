@@ -1,10 +1,13 @@
 import {
 	LayoutGrid,
 	LogOut,
+	Menu,
 	Package,
 	ShoppingCart,
 	Users,
+	X,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/shared/lib/utils";
 import { useAuth } from "../../auth";
@@ -20,6 +23,12 @@ export function AdminLayout() {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const { user, logout } = useAuth();
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+	// Fechar sidebar ao mudar de rota em dispositivos móveis
+	useEffect(() => {
+		setIsSidebarOpen(false);
+	}, [location.pathname]);
 
 	const handleLogout = async () => {
 		await logout();
@@ -35,10 +44,24 @@ export function AdminLayout() {
 	};
 
 	return (
-		<div className="flex h-screen bg-[#f5f5f5]">
+		<div className="flex h-screen bg-[#f5f5f5] overflow-hidden">
+			{/* Overlay para mobile */}
+			{isSidebarOpen && (
+				<div
+					className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm transition-opacity"
+					onClick={() => setIsSidebarOpen(false)}
+					onKeyDown={(e) => e.key === "Escape" && setIsSidebarOpen(false)}
+				/>
+			)}
+
 			{/* Sidebar */}
-			<aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
-				<div className="h-16 flex items-center px-6 border-b border-gray-200">
+			<aside
+				className={cn(
+					"fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 flex flex-col transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 shadow-2xl lg:shadow-none",
+					isSidebarOpen ? "translate-x-0" : "-translate-x-full",
+				)}
+			>
+				<div className="h-16 flex items-center justify-between px-6 border-b border-gray-200">
 					<Link to="/" className="flex items-center gap-2">
 						<div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
 							<span className="text-white font-bold text-xl">D</span>
@@ -47,6 +70,12 @@ export function AdminLayout() {
 							Digital Store
 						</span>
 					</Link>
+					<button
+						className="lg:hidden p-2 text-gray-400 hover:text-gray-600"
+						onClick={() => setIsSidebarOpen(false)}
+					>
+						<X className="h-6 w-6" />
+					</button>
 				</div>
 
 				<div className="flex-1 overflow-y-auto py-4">
@@ -93,10 +122,17 @@ export function AdminLayout() {
 			</aside>
 
 			{/* Main Content */}
-			<main className="flex-1 flex flex-col overflow-hidden">
-				<header className="h-16 bg-white border-b border-gray-200 flex items-center justify-end px-6">
+			<main className="flex-1 flex flex-col overflow-hidden w-full">
+				<header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between lg:justify-end px-4 sm:px-6">
+					<button
+						className="lg:hidden p-2 -ml-2 text-gray-500 hover:text-gray-700 transition-colors"
+						onClick={() => setIsSidebarOpen(true)}
+					>
+						<Menu className="h-6 w-6" />
+					</button>
+
 					<div className="flex items-center gap-3">
-						<div className="text-sm text-right">
+						<div className="hidden sm:block text-sm text-right">
 							<p className="font-medium text-gray-900">
 								{user ? `${user.firstname} ${user.surname}` : "Admin User"}
 							</p>
@@ -104,16 +140,17 @@ export function AdminLayout() {
 								{user?.email || "admin@digitalstore.com"}
 							</p>
 						</div>
-						<div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+						<div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold shadow-inner">
 							{getUserInitials()}
 						</div>
 					</div>
 				</header>
 
-				<div className="flex-1 overflow-auto p-8">
+				<div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
 					<Outlet />
 				</div>
 			</main>
 		</div>
 	);
 }
+

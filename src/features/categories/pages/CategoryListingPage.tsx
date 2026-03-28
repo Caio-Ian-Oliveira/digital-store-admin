@@ -168,7 +168,7 @@ export function CategoryListingPage() {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between gap-4">
+			<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 				<div>
 					<h1 className="text-title-medium text-gray-900">Categorias</h1>
 					<p className="text-sm text-gray-500 mt-1">
@@ -178,10 +178,10 @@ export function CategoryListingPage() {
 				<button
 					type="button"
 					onClick={handleOpenCreateDialog}
-					className="bg-primary text-white hover:bg-tertiary transition-colors px-4 py-2 rounded-md font-medium text-sm flex items-center gap-2"
+					className="w-full sm:w-auto bg-primary text-white hover:bg-tertiary transition-colors px-4 py-2 rounded-md font-medium text-sm flex items-center justify-center gap-2"
 				>
 					<Plus className="w-4 h-4" />
-					Nova Categoria
+					<span className="whitespace-nowrap">Nova Categoria</span>
 				</button>
 			</div>
 
