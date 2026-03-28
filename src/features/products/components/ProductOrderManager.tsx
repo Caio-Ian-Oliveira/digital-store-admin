@@ -1,9 +1,9 @@
 import {
+	closestCenter,
 	DndContext,
 	type DragEndEvent,
 	KeyboardSensor,
 	PointerSensor,
-	closestCenter,
 	useSensor,
 	useSensors,
 } from "@dnd-kit/core";
@@ -259,10 +259,7 @@ export function ProductOrderManager({
 								<th scope="col" className="px-4 py-4 font-medium">
 									Nome do Produto
 								</th>
-								<th
-									scope="col"
-									className="px-4 py-4 font-medium text-center"
-								>
+								<th scope="col" className="px-4 py-4 font-medium text-center">
 									Status
 								</th>
 								<th

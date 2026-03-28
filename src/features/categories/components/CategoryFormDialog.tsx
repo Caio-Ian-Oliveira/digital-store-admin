@@ -3,8 +3,11 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Loader2, X } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import {
+	type CategoryFormValues,
+	categorySchema,
+} from "../schemas/CategorySchema";
 import type { Category } from "../types/category";
-import { categorySchema, type CategoryFormValues } from "../schemas/CategorySchema";
 
 interface CategoryFormDialogProps {
 	open: boolean;
@@ -14,6 +17,12 @@ interface CategoryFormDialogProps {
 	isSubmitting: boolean;
 }
 
+/**
+ * Diálogo de formulário para criação e edição de categorias.
+ *
+ * @param {CategoryFormDialogProps} props - Propriedades do componente.
+ * @returns {JSX.Element} O componente de diálogo do formulário.
+ */
 export function CategoryFormDialog({
 	open,
 	onOpenChange,
@@ -40,6 +49,7 @@ export function CategoryFormDialog({
 
 	const nameValue = watch("name");
 
+	// Reseta o formulário quando o diálogo abre ou a categoria selecionada muda
 	useEffect(() => {
 		if (!open) {
 			return;
@@ -52,11 +62,16 @@ export function CategoryFormDialog({
 		});
 	}, [category, open, reset]);
 
+	// Gera o slug automaticamente a partir do nome da categoria
 	useEffect(() => {
 		if (!nameValue) {
 			return;
 		}
 
+		/**
+		 * Transforma uma string em um slug amigável para URL.
+		 * Ex: "Eletrônicos & Cia" -> "eletronicos-cia"
+		 */
 		const generatedSlug = nameValue
 			.toLowerCase()
 			.trim()
@@ -69,6 +84,12 @@ export function CategoryFormDialog({
 		setValue("slug", generatedSlug, { shouldValidate: true });
 	}, [nameValue, setValue]);
 
+	/**
+	 * Manipulador interno para a submissão do formulário.
+	 *
+	 * @param {CategoryFormValues} data - Dados validados do formulário.
+	 * @returns {Promise<void>}
+	 */
 	const handleFormSubmit = async (data: CategoryFormValues) => {
 		await onSubmit(data, category?.id);
 	};

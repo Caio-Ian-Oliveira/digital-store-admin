@@ -4,15 +4,22 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CategoryFormDialog } from "../components/CategoryFormDialog";
 import { DeleteCategoryDialog } from "../components/DeleteCategoryDialog";
+import { useCategories } from "../hooks/useCategories";
+import type { CategoryFormValues } from "../schemas/CategorySchema";
 import { categoryService } from "../services/categoryService";
 import type { Category } from "../types/category";
-import type { CategoryFormValues } from "../schemas/CategorySchema";
-import { useCategories } from "../hooks/useCategories";
 
 const ITEMS_PER_PAGE = 12;
 
+/**
+ * Extrai uma mensagem de erro amigável a partir do objeto de erro da API.
+ *
+ * @param {unknown} error - O objeto de erro retornado pela requisição.
+ * @returns {string} Uma mensagem de erro formatada em português.
+ */
 function getApiErrorMessage(error: unknown) {
-	const fallbackMessage = "Não foi possível concluir a operação. Tente novamente.";
+	const fallbackMessage =
+		"Não foi possível concluir a operação. Tente novamente.";
 
 	if (
 		typeof error === "object" &&
@@ -44,13 +51,21 @@ function getApiErrorMessage(error: unknown) {
 	return fallbackMessage;
 }
 
+/**
+ * Página de listagem e gerenciamento de categorias.
+ * Permite buscar, filtrar, criar, editar e excluir categorias.
+ *
+ * @returns {JSX.Element} O componente da página de categorias.
+ */
 export function CategoryListingPage() {
 	const queryClient = useQueryClient();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [showOnlyMenuCategories, setShowOnlyMenuCategories] = useState(false);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [isFormOpen, setIsFormOpen] = useState(false);
-	const [selectedCategory, setSelectedCategory] = useState<Category | undefined>();
+	const [selectedCategory, setSelectedCategory] = useState<
+		Category | undefined
+	>();
 	const [deleteDialogData, setDeleteDialogData] = useState<{
 		open: boolean;
 		id: string | null;
@@ -71,6 +86,9 @@ export function CategoryListingPage() {
 	const totalItems = data?.total ?? 0;
 	const totalPages = Math.max(1, Math.ceil(totalItems / ITEMS_PER_PAGE));
 
+	/**
+	 * Memoiza a lista de categorias filtradas pelo termo de busca.
+	 */
 	const filteredCategories = useMemo(() => {
 		if (!searchTerm.trim()) {
 			return categories;
@@ -84,6 +102,9 @@ export function CategoryListingPage() {
 		);
 	}, [categories, searchTerm]);
 
+	/**
+	 * Mutação para salvar (criar ou atualizar) uma categoria.
+	 */
 	const saveCategoryMutation = useMutation({
 		mutationFn: async ({
 			formData,
@@ -121,6 +142,9 @@ export function CategoryListingPage() {
 		},
 	});
 
+	/**
+	 * Mutação para excluir uma categoria.
+	 */
 	const deleteCategoryMutation = useMutation({
 		mutationFn: (id: string) => categoryService.deleteCategory(id),
 		onSuccess: () => {
@@ -133,35 +157,64 @@ export function CategoryListingPage() {
 		},
 	});
 
-	const handleSubmitForm = async (formData: CategoryFormValues, categoryId?: string) => {
+	/**
+	 * Despacha a ação de salvamento de categoria.
+	 *
+	 * @param {CategoryFormValues} formData - Dados brutos do formulário.
+	 * @param {string} [categoryId] - ID da categoria em caso de edição.
+	 */
+	const handleSubmitForm = async (
+		formData: CategoryFormValues,
+		categoryId?: string,
+	) => {
 		await saveCategoryMutation.mutateAsync({ formData, categoryId });
 	};
 
+	/**
+	 * Abre o diálogo de criação de categoria.
+	 */
 	const handleOpenCreateDialog = () => {
 		setSelectedCategory(undefined);
 		setIsFormOpen(true);
 	};
 
+	/**
+	 * Abre o diálogo de edição para uma categoria específica.
+	 *
+	 * @param {Category} category - A categoria a ser editada.
+	 */
 	const handleOpenEditDialog = (category: Category) => {
 		setSelectedCategory(category);
 		setIsFormOpen(true);
 	};
 
+	/**
+	 * Confirma a exclusão da categoria selecionada.
+	 */
 	const handleDeleteCategory = () => {
 		if (deleteDialogData.id) {
 			deleteCategoryMutation.mutate(deleteDialogData.id);
 		}
 	};
 
+	/**
+	 * Alterna o filtro de visibilidade no menu.
+	 */
 	const handleToggleMenuFilter = () => {
 		setCurrentPage(1);
 		setShowOnlyMenuCategories((prev) => !prev);
 	};
 
+	/**
+	 * Navega para a página anterior de resultados.
+	 */
 	const handlePrevPage = () => {
 		setCurrentPage((prev) => Math.max(prev - 1, 1));
 	};
 
+	/**
+	 * Navega para a próxima página de resultados.
+	 */
 	const handleNextPage = () => {
 		setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 	};
@@ -207,7 +260,9 @@ export function CategoryListingPage() {
 
 			<div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 				{isLoading ? (
-					<div className="p-8 text-center text-gray-500">Carregando categorias...</div>
+					<div className="p-8 text-center text-gray-500">
+						Carregando categorias...
+					</div>
 				) : isError ? (
 					<div className="p-8 text-center text-red-500">
 						Erro ao carregar categorias. Verifique sua conexão com a API.
@@ -231,9 +286,16 @@ export function CategoryListingPage() {
 								</thead>
 								<tbody className="divide-y divide-gray-200">
 									{filteredCategories.map((category) => (
-										<tr key={category.id} className="hover:bg-gray-50 transition-colors">
-											<td className="px-6 py-4 font-medium text-gray-900">{category.name}</td>
-											<td className="px-6 py-4 text-gray-500">{category.slug}</td>
+										<tr
+											key={category.id}
+											className="hover:bg-gray-50 transition-colors"
+										>
+											<td className="px-6 py-4 font-medium text-gray-900">
+												{category.name}
+											</td>
+											<td className="px-6 py-4 text-gray-500">
+												{category.slug}
+											</td>
 											<td className="px-6 py-4 text-center">
 												<span
 													className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${
@@ -247,7 +309,9 @@ export function CategoryListingPage() {
 											</td>
 											<td className="px-6 py-4 text-gray-500">
 												{category.updated_at
-													? new Date(category.updated_at).toLocaleDateString("pt-BR")
+													? new Date(category.updated_at).toLocaleDateString(
+															"pt-BR",
+														)
 													: "-"}
 											</td>
 											<td className="px-6 py-4">
@@ -284,8 +348,12 @@ export function CategoryListingPage() {
 
 						<div className="px-6 py-4 border-t border-gray-200 bg-white flex items-center justify-between">
 							<p className="text-sm text-gray-600">
-								Mostrando <span className="font-semibold">{filteredCategories.length}</span> de{" "}
-								<span className="font-semibold">{totalItems}</span> categorias
+								Mostrando{" "}
+								<span className="font-semibold">
+									{filteredCategories.length}
+								</span>{" "}
+								de <span className="font-semibold">{totalItems}</span>{" "}
+								categorias
 							</p>
 
 							<div className="flex items-center gap-2">

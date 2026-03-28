@@ -1,16 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight, Search, X, FilterX } from "lucide-react";
+import { ChevronLeft, ChevronRight, FilterX, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { userService } from "../services/userService";
 
 const ITEMS_PER_PAGE = 15;
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
+/** Mapa de exibição para os papéis dos usuários com rótulo e cor. */
 const roleBadge: Record<string, { label: string; color: string }> = {
 	USER: { label: "Usuário", color: "bg-blue-100 text-blue-800" },
 	ADMIN: { label: "Admin", color: "bg-purple-100 text-purple-800" },
 };
 
+/**
+ * Página de listagem e gerenciamento de usuários cadastrados na plataforma.
+ * Permite busca por nome/e-mail/CPF, filtro por papel e filtro por inicial do nome.
+ *
+ * @returns {JSX.Element} O componente da página de usuários.
+ */
 export function UserListingPage() {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [searchQuery, setSearchQuery] = useState("");
@@ -26,13 +33,18 @@ export function UserListingPage() {
 		queryFn: () => userService.getUsers(currentPage, ITEMS_PER_PAGE),
 	});
 
+	/**
+	 * Memoiza a lista de usuários filtrada pelos filtros ativos (busca, papel e inicial do nome).
+	 */
 	const filteredUsers = useMemo(() => {
 		if (!userResponse?.data) return [];
 
 		return userResponse.data.filter((user) => {
 			const matchesSearch =
 				searchQuery.trim() === "" ||
-				`${user.firstname} ${user.surname}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				`${user.firstname} ${user.surname}`
+					.toLowerCase()
+					.includes(searchQuery.toLowerCase()) ||
 				user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
 				(user.cpf && user.cpf.includes(searchQuery));
 
@@ -49,16 +61,20 @@ export function UserListingPage() {
 	const totalItems = userResponse?.total || 0;
 	const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
+	/** Navega para a página anterior de usuários. */
 	const handlePrevPage = () => {
 		setCurrentPage((prev) => Math.max(prev - 1, 1));
 	};
 
+	/** Navega para a próxima página de usuários. */
 	const handleNextPage = () => {
 		setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 	};
 
-	const hasActiveFilters = searchQuery !== "" || roleFilter !== "ALL" || initialFilter !== null;
+	const hasActiveFilters =
+		searchQuery !== "" || roleFilter !== "ALL" || initialFilter !== null;
 
+	/** Limpa todos os filtros ativos de busca. */
 	const handleClearAllFilters = () => {
 		setSearchQuery("");
 		setRoleFilter("ALL");
@@ -68,7 +84,9 @@ export function UserListingPage() {
 	return (
 		<div className="space-y-6">
 			<div className="flex items-center justify-between">
-				<h1 className="text-xl font-bold text-gray-900">Gerenciamento de Usuários</h1>
+				<h1 className="text-xl font-bold text-gray-900">
+					Gerenciamento de Usuários
+				</h1>
 			</div>
 
 			{/* Search and Filter Toolbar */}
@@ -95,7 +113,9 @@ export function UserListingPage() {
 					<div className="flex flex-col sm:flex-row gap-3">
 						<select
 							value={roleFilter}
-							onChange={(e) => setRoleFilter(e.target.value as "ALL" | "USER" | "ADMIN")}
+							onChange={(e) =>
+								setRoleFilter(e.target.value as "ALL" | "USER" | "ADMIN")
+							}
 							className="w-full sm:w-auto px-4 py-3 border-2 border-gray-200 rounded-xl text-sm text-gray-700 bg-gray-50 font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer min-w-[170px]"
 						>
 							<option value="ALL">Todos os cargos</option>
@@ -136,7 +156,9 @@ export function UserListingPage() {
 
 			<div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col">
 				{isLoading ? (
-					<div className="p-8 text-center text-gray-500">Carregando usuários...</div>
+					<div className="p-8 text-center text-gray-500">
+						Carregando usuários...
+					</div>
 				) : isError ? (
 					<div className="p-8 text-center text-red-500">
 						Erro ao carregar usuários. Verifique sua conexão com a API.
@@ -210,8 +232,7 @@ export function UserListingPage() {
 								<span className="text-primary font-bold">
 									{filteredUsers.length}
 								</span>{" "}
-								de{" "}
-								<span className="text-gray-900 font-bold">{totalItems}</span>{" "}
+								de <span className="text-gray-900 font-bold">{totalItems}</span>{" "}
 								usuários
 							</div>
 

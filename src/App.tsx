@@ -1,16 +1,22 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
-
-import { AdminLayout } from "./features/layout";
-import { AuthProvider, RequireAuth, LoginPage } from "./features/auth";
-import { UserListingPage } from "./features/users";
-import { OrderListingPage } from "./features/orders";
-import { ProductListingPage, ProductEditPage } from "./features/products";
+import { AuthProvider, LoginPage, RequireAuth } from "./features/auth";
 import { CategoryListingPage } from "./features/categories";
+import { AdminLayout } from "./features/layout";
+import { OrderListingPage } from "./features/orders";
+import { ProductEditPage, ProductListingPage } from "./features/products";
+import { UserListingPage } from "./features/users";
 
+/** Instância global do TanStack Query Client para gerenciamento de cache e estado do servidor. */
 const queryClient = new QueryClient();
 
+/**
+ * Componente raiz da aplicação.
+ * Configura os provedores globais: TanStack Query, React Router, Autenticação e Notificações.
+ *
+ * @returns {JSX.Element} A árvore de componentes com todos os provedores configurados.
+ */
 function App() {
 	return (
 		<QueryClientProvider client={queryClient}>
