@@ -12,12 +12,16 @@ export const orderService = {
 			params.append("userId", userId);
 		}
 
-		const response = await api.get<OrderListResponse>(`/v1/admin/orders?${params.toString()}`);
+		const response = await api.get<OrderListResponse>(
+			`/v1/admin/orders?${params.toString()}`,
+		);
 		return response.data;
 	},
 
 	updateOrderStatus: async (orderId: string, status: OrderStatus) => {
-		const response = await api.patch(`/v1/admin/orders/${orderId}/status`, { status });
+		const response = await api.patch(`/v1/admin/orders/${orderId}/status`, {
+			status,
+		});
 		return response.data;
 	},
 };

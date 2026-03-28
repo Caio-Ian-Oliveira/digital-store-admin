@@ -17,13 +17,19 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
+/**
+ * Página de Login do Painel Administrativo.
+ * Gerencia a autenticação de usuários com privilégios de administrador.
+ *
+ * @returns {JSX.Element} O componente da página de login.
+ */
 export function LoginPage() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { login } = useAuth();
 	const [globalError, setGlobalError] = useState<string | null>(null);
 
-	// Onde o usuário tentava ir, ou default para "/products"
+	// Onde o usuário tentava ir originalmente, ou redireciona para "/products" por padrão
 	const from = location.state?.from?.pathname || "/products";
 
 	const {
@@ -34,6 +40,12 @@ export function LoginPage() {
 		resolver: zodResolver(loginSchema),
 	});
 
+	/**
+	 * Processa a submissão do formulário de login.
+	 *
+	 * @param {LoginFormData} data - Os dados preenchidos no formulário (email e senha).
+	 * @returns {Promise<void>}
+	 */
 	const onSubmit = async (data: LoginFormData) => {
 		try {
 			setGlobalError(null);

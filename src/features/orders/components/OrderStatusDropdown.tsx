@@ -10,19 +10,37 @@ interface OrderStatusDropdownProps {
 	currentStatus: OrderStatus;
 }
 
+/** Mapa de status de pedido para exibição visual com rótulo e estilo de cor. */
 const statusMap: Record<OrderStatus, { label: string; color: string }> = {
-	pending: { label: "Aguardando pagamento", color: "bg-yellow-100 text-yellow-800" },
-	completed: { label: "Pagamento Realizado", color: "bg-green-100 text-green-800" },
+	pending: {
+		label: "Aguardando pagamento",
+		color: "bg-yellow-100 text-yellow-800",
+	},
+	completed: {
+		label: "Pagamento Realizado",
+		color: "bg-green-100 text-green-800",
+	},
 	shipped: { label: "Pedido enviado", color: "bg-blue-100 text-blue-800" },
 	cancelled: { label: "Pedido cancelado", color: "bg-red-100 text-red-800" },
 	delivered: { label: "Pedido entregue", color: "bg-gray-100 text-gray-800" },
 };
 
-export function OrderStatusDropdown({ orderId, currentStatus }: OrderStatusDropdownProps) {
+/**
+ * Componente de dropdown para atualização do status de um pedido.
+ * Exibe o status atual e permite a seleção de um novo status via menu.
+ *
+ * @param {OrderStatusDropdownProps} props - Propriedades do componente.
+ * @returns {JSX.Element} O menu dropdown de status.
+ */
+export function OrderStatusDropdown({
+	orderId,
+	currentStatus,
+}: OrderStatusDropdownProps) {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
-		mutationFn: (newStatus: OrderStatus) => orderService.updateOrderStatus(orderId, newStatus),
+		mutationFn: (newStatus: OrderStatus) =>
+			orderService.updateOrderStatus(orderId, newStatus),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["orders"] });
 			toast.success("Status atualizado!");

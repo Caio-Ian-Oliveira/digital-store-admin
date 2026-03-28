@@ -9,6 +9,13 @@ interface OrderDetailsDialogProps {
 	order: Order | null;
 }
 
+/**
+ * Diálogo de detalhes completos de um pedido.
+ * Exibe informações do cliente, endereço de entrega, itens e total.
+ *
+ * @param {OrderDetailsDialogProps} props - Propriedades do componente.
+ * @returns {JSX.Element | null} O componente de diálogo ou null se nenhum pedido estiver selecionado.
+ */
 export function OrderDetailsDialog({
 	open,
 	onOpenChange,

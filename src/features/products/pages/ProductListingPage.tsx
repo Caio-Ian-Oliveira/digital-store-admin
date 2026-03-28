@@ -8,6 +8,12 @@ import { ProductFormDialog } from "../components/ProductFormDialog";
 import { ProductOrderManager } from "../components/ProductOrderManager";
 import { productService } from "../services/productService";
 
+/**
+ * Página de listagem e gerenciamento de produtos.
+ * Exibe todos os produtos em tabela, permite criação, edição, exclusão e reordenação de exibição.
+ *
+ * @returns {JSX.Element} O componente da página de produtos.
+ */
 export function ProductListingPage() {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
@@ -32,6 +38,9 @@ export function ProductListingPage() {
 		queryFn: productService.getProducts,
 	});
 
+	/**
+	 * Mutação para atualizar a ordem de exibição dos produtos na vitrine.
+	 */
 	const updateOrderMutation = useMutation({
 		mutationFn: productService.updateProductOrder,
 		onSuccess: () => {
@@ -44,6 +53,12 @@ export function ProductListingPage() {
 		},
 	});
 
+	/**
+	 * Abre o diálogo de confirmação de exclusão para um produto específico.
+	 *
+	 * @param {number} id - O ID numérico do produto.
+	 * @param {string} name - O nome do produto para exibir no diálogo.
+	 */
 	const handleDeleteClick = (id: number, name: string) => {
 		setDeleteDialogData({ open: true, id, name });
 	};

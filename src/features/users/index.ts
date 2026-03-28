@@ -1,11 +1,10 @@
 // Pages
-export { UserListingPage } from './pages/UserListingPage';
-
-// Services
-export { userService } from './services/userService';
 
 // Hooks
-export { useUsers } from './hooks/useUsers';
+export { useUsers } from "./hooks/useUsers";
+export { UserListingPage } from "./pages/UserListingPage";
+// Services
+export { userService } from "./services/userService";
 
 // Types
-export type { UserListResponse } from './types/user';
+export type { UserListResponse } from "./types/user";

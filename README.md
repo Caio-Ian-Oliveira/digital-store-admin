@@ -1,4 +1,4 @@
-# 📊 Digital Store — Painel Administrativo (Stable Version)
+# 📊 Digital Store — Painel Administrativo
 
 <div align="center">
   <img src="src/assets/images/logo-header.svg" alt="Digital Store Logo" height="50" />
@@ -8,7 +8,7 @@
   ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
   ![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)
   ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
-  ![Biome](https://img.shields.io/badge/Biome-2.3-60A5FA?logo=biome&logoColor=white)
+  ![Biome](https://img.shields.io/badge/Biome-2.4-60A5FA?logo=biome&logoColor=white)
   ![License](https://img.shields.io/badge/Licença-MIT-green)
 </div>
 
@@ -65,10 +65,12 @@ O projeto **Digital Store** é composto por **3 repositórios independentes** qu
 - **Gerenciamento de Variações** (ex: cor, tamanho) e controle de estoque para cada variação.
 - **Exclusão de Produtos** com diálogo de confirmação para evitar ações acidentais.
 - **Validação de Dados** robusta utilizando **Zod** e **React Hook Form**.
+- **Reordenação por Drag & Drop** da ordem de exibição dos produtos na vitrine.
 
 ### 📚 Gestão de Categorias (CRUD Completo)
-- **Visualização** de todas as categorias cadastradas.
+- **Visualização** de todas as categorias cadastradas com busca e filtros.
 - **Criação, Edição e Exclusão** de categorias em modais, sem a necessidade de recarregar a página.
+- **Autogeração de Slug** a partir do nome da categoria, tanto na criação quanto na edição.
 - **Associação de Produtos** a uma ou mais categorias.
 
 ### 🛒 Gestão de Pedidos
@@ -76,12 +78,23 @@ O projeto **Digital Store** é composto por **3 repositórios independentes** qu
 - **Visualização de Detalhes do Pedido** em um modal, incluindo produtos, quantidades e endereço de entrega.
 - **Atualização de Status do Pedido** (ex: "Processando", "Enviado", "Entregue") com um clique.
 
+### 👥 Gestão de Usuários
+- **Listagem de Usuários** cadastrados na plataforma.
+- **Filtros e Busca** por nome, e-mail, CPF, papel (USER/ADMIN) e inicial do nome.
+
+### 📱 Interface Responsiva
+- **Menu Lateral Adaptativo**: A sidebar é exibida em telas maiores e converte-se em um menu drawer acionado por um ícone "hamburger" em dispositivos móveis (< 1024px).
+- **Overlay de Fechamento**: Ao abrir o menu em mobile, um fundo escurecido permite fechá-lo tocando fora.
+- **Cabeçalhos Adaptados**: Títulos e botões de ação se empilham verticalmente em telas pequenas para evitar quebras de layout.
+- **Tabelas com Scroll Horizontal**: Todas as tabelas suportam rolagem horizontal para garantir a legibilidade em telas estreitas.
+- **Formulários Responsivos**: Os formulários de produto e categoria alternam entre 1 e 2 colunas dependendo do espaço disponível.
+
 ### 🎨 UI/UX Focado em Administração
 - **Layout Administrativo** consistente com menu lateral de navegação.
-- **Componentes Reutilizáveis** de alta qualidade (Inputs, Tabelas, Modais) construídos com **Shadcn/UI** e **Radix UI**.
+- **Componentes Reutilizáveis** de alta qualidade (Inputs, Tabelas, Modais) construídos com **Radix UI**.
 - **Feedback Visual Instantâneo** com Toasts (Sonner) para todas as operações (sucesso, erro).
-- **Carregamento Progressivo** com componentes `Skeleton` para uma experiência de usuário fluida.
-- **Design Responsivo** que se adapta a diferentes tamanhos de tela, permitindo o gerenciamento em desktops ou tablets.
+- **Carregamento Progressivo** com estados de loading para uma experiência de usuário fluida.
+
 ---
 
 ## 💻 Tech Stack
@@ -111,13 +124,10 @@ O projeto segue uma **arquitetura baseada em features** (domínios), separando r
 src/
 ├── assets/                    # Imagens e SVGs globais
 │
-├── components/                # Componentes de UI compartilhados (ex: layout)
-│   └── layout/                #   AdminLayout (estrutura principal do painel)
-│
 ├── features/                  # 🎯 Módulos de domínio (Feature-Based)
 │   ├── auth/                  # Autenticação e autorização
 │   │   ├── components/        #   Componentes de proteção de rota (RequireAuth)
-│   │   ├── context/           #   AuthContext para estado de sessão
+│   │   ├── context/           #   AuthContext para estado de sessão global
 │   │   ├── hooks/             #   useAuth para acesso ao contexto
 │   │   ├── pages/             #   Página de Login
 │   │   ├── services/          #   Chamadas HTTP para autenticação
@@ -125,28 +135,33 @@ src/
 │   │
 │   ├── categories/            # Gestão de Categorias
 │   │   ├── components/        #   Modais de formulário e exclusão
-│   │   ├── hooks/             #   useCategories para lógica de dados
+│   │   ├── hooks/             #   useCategories e useCategory
 │   │   ├── pages/             #   Página de listagem de categorias
 │   │   ├── schemas/           #   Esquemas de validação com Zod
 │   │   ├── services/          #   Chamadas HTTP para o CRUD de categorias
 │   │   └── types/             #   Tipagens de Categoria
 │   │
+│   ├── layout/                # Layout do painel administrativo
+│   │   └── components/        #   AdminLayout (sidebar, header, outlet)
+│   │
 │   ├── orders/                # Gestão de Pedidos
 │   │   ├── components/        #   Modal de detalhes, dropdown de status
-│   │   ├── hooks/             #   useOrders para lógica de dados
 │   │   ├── pages/             #   Página de listagem de pedidos
 │   │   ├── services/          #   Chamadas HTTP para pedidos
 │   │   └── types/             #   Tipagens de Pedido
 │   │
-│   └── products/              # Gestão de Produtos
-│       ├── components/        #   Formulários, diálogos, upload de imagem
-│       ├── hooks/             #   Hooks para formulário e listagem
-│       ├── pages/             #   Páginas de listagem e edição
-│       ├── schemas/           #   Esquema de validação de produto
-│       ├── services/          #   Chamadas HTTP para o CRUD de produtos
-│       └── types/             #   Tipagens de Produto
-│
-├── services/                  # Serviços de API centralizados
+│   ├── products/              # Gestão de Produtos
+│   │   ├── components/        #   Formulários, diálogos, upload de imagem, ordenação
+│   │   ├── hooks/             #   useProductForm para lógica de formulário
+│   │   ├── pages/             #   Páginas de listagem e edição
+│   │   ├── schemas/           #   Esquema de validação de produto
+│   │   ├── services/          #   Chamadas HTTP para o CRUD de produtos
+│   │   └── types/             #   Tipagens de Produto
+│   │
+│   └── users/                 # Gestão de Usuários
+│       ├── pages/             #   Página de listagem de usuários
+│       ├── services/          #   Chamadas HTTP para usuários
+│       └── types/             #   Tipagens de Usuário
 │
 ├── shared/                    # Utilitários e lógica compartilhada
 │   └── lib/                   #   Instância do Axios (api.ts), funções (utils.ts)
@@ -154,6 +169,36 @@ src/
 ├── App.tsx                    # Componente raiz (Providers + Rotas)
 └── main.tsx                   # Entry point da aplicação
 ```
+
+---
+
+## 📐 Convenções de Código
+
+O projeto adota as seguintes regras para garantir consistência e manutenibilidade:
+
+### JSDoc Obrigatório
+Todos os componentes, hooks, funções e serviços devem conter comentários **JSDoc** em **Português (PT-BR)**, incluindo:
+- `@param` para descrever cada parâmetro.
+- `@returns` para descrever o valor retornado.
+- Descrição clara do propósito da função ou componente.
+
+```typescript
+/**
+ * Hook customizado para acessar o contexto de autenticação de forma segura.
+ *
+ * @returns {AuthContextType} O objeto contendo o estado do usuário e métodos de auth.
+ * @throws {Error} Se o hook for utilizado fora de um AuthProvider.
+ */
+export function useAuth() { ... }
+```
+
+### Comentários Inline
+Comentários inline devem ser escritos em **Português (PT-BR)** e explicar o "porquê" de decisões não óbvias, não o "o quê" do código.
+
+### Linting e Formatação
+- **BiomeJS** é utilizado para linting e formatação automática.
+- Indentação com **tabs** e aspas **duplas** para strings.
+- Execute `npm run check` para validar e corrigir automaticamente.
 
 ---
 
@@ -229,7 +274,8 @@ O ecossistema completo (Front-end Cliente + API + Painel Admin) foi desenvolvido
 - 🔒 **Segurança** — HTTP-Only Cookies, validação em múltiplas camadas
 - ⚡ **Performance** — Assets WebP, React Query com cache inteligente, Vite
 - 🎨 **UI/UX profissional** — Design System, componentes reutilizáveis
-- 🧹 **Código limpo** — TypeScript estrito, BiomeJS, zero warnings
+- 📱 **Responsividade** — Mobile-first, sidebar adaptativa, tabelas com scroll
+- 🧹 **Código limpo** — TypeScript estrito, BiomeJS, JSDoc em PT-BR, zero warnings
 
 ---
 
