@@ -50,24 +50,24 @@ export function ProductListingPage() {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between">
+			<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 				<h1 className="text-title-medium text-gray-900">Produtos</h1>
-				<div className="flex items-center gap-2">
+				<div className="flex flex-wrap items-center gap-2">
 					{!isOrderingMode && (
 						<>
 							<button
 								type="button"
 								onClick={() => setIsOrderingMode(true)}
 								disabled={!products || products.length === 0}
-								className="border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors px-4 py-2 rounded-md font-medium text-sm flex items-center gap-2 disabled:opacity-50"
+								className="flex-1 sm:flex-none border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors px-4 py-2 rounded-md font-medium text-sm flex items-center justify-center gap-2 disabled:opacity-50"
 							>
 								<ArrowUpDown className="w-4 h-4" />
-								Ordenar Exibição
+								<span className="whitespace-nowrap">Ordenar Exibição</span>
 							</button>
 							<button
 								type="button"
 								onClick={() => setIsAddDialogOpen(true)}
-								className="bg-primary text-white hover:bg-tertiary transition-colors px-4 py-2 rounded-md font-medium text-sm"
+								className="flex-1 sm:flex-none bg-primary text-white hover:bg-tertiary transition-colors px-4 py-2 rounded-md font-medium text-sm whitespace-nowrap"
 							>
 								Adicionar Produto
 							</button>

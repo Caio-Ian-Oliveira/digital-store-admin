@@ -72,13 +72,13 @@ export function UserListingPage() {
 			</div>
 
 			{/* Search and Filter Toolbar */}
-			<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 space-y-4">
-				<div className="flex flex-col sm:flex-row gap-3">
+			<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5 space-y-4">
+				<div className="flex flex-col lg:flex-row gap-3">
 					<div className="relative flex-1">
 						<Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
 						<input
 							type="text"
-							placeholder="Pesquisar por nome, email ou CPF..."
+							placeholder="Pesquisar..."
 							value={searchQuery}
 							onChange={(e) => setSearchQuery(e.target.value)}
 							className="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all bg-gray-50 font-medium"
@@ -92,35 +92,37 @@ export function UserListingPage() {
 							</button>
 						)}
 					</div>
-					<select
-						value={roleFilter}
-						onChange={(e) => setRoleFilter(e.target.value as "ALL" | "USER" | "ADMIN")}
-						className="px-4 py-3 border-2 border-gray-200 rounded-xl text-sm text-gray-700 bg-gray-50 font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer min-w-[170px]"
-					>
-						<option value="ALL">Todos os cargos</option>
-						<option value="USER">Usuário</option>
-						<option value="ADMIN">Admin</option>
-					</select>
-					{hasActiveFilters && (
-						<button
-							onClick={handleClearAllFilters}
-							className="flex items-center gap-2 px-4 py-3 bg-red-50 text-red-600 border-2 border-red-200 rounded-xl text-sm font-bold hover:bg-red-100 transition-all"
+					<div className="flex flex-col sm:flex-row gap-3">
+						<select
+							value={roleFilter}
+							onChange={(e) => setRoleFilter(e.target.value as "ALL" | "USER" | "ADMIN")}
+							className="w-full sm:w-auto px-4 py-3 border-2 border-gray-200 rounded-xl text-sm text-gray-700 bg-gray-50 font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer min-w-[170px]"
 						>
-							<FilterX className="w-4 h-4" />
-							Limpar
-						</button>
-					)}
+							<option value="ALL">Todos os cargos</option>
+							<option value="USER">Usuário</option>
+							<option value="ADMIN">Admin</option>
+						</select>
+						{hasActiveFilters && (
+							<button
+								onClick={handleClearAllFilters}
+								className="flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 border-2 border-red-200 rounded-xl text-sm font-bold hover:bg-red-100 transition-all"
+							>
+								<FilterX className="w-4 h-4" />
+								Limpar
+							</button>
+						)}
+					</div>
 				</div>
 
 				{/* Alphabetical Initial Filter */}
-				<div className="flex flex-wrap gap-1.5">
+				<div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 pt-2 border-t border-gray-100 lg:border-none lg:pt-0">
 					{ALPHABET.map((letter) => (
 						<button
 							key={letter}
 							onClick={() =>
 								setInitialFilter(initialFilter === letter ? null : letter)
 							}
-							className={`w-9 h-9 flex items-center justify-center rounded-lg text-xs font-bold transition-all ${
+							className={`w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-lg text-xs font-bold transition-all ${
 								initialFilter === letter
 									? "bg-primary text-white shadow-md scale-110"
 									: "bg-gray-100 text-gray-600 hover:bg-primary/10 hover:text-primary"

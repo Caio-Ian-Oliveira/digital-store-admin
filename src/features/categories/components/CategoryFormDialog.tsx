@@ -53,7 +53,7 @@ export function CategoryFormDialog({
 	}, [category, open, reset]);
 
 	useEffect(() => {
-		if (isEditMode || !nameValue) {
+		if (!nameValue) {
 			return;
 		}
 
@@ -67,7 +67,7 @@ export function CategoryFormDialog({
 			.slice(0, 50);
 
 		setValue("slug", generatedSlug, { shouldValidate: true });
-	}, [isEditMode, nameValue, setValue]);
+	}, [nameValue, setValue]);
 
 	const handleFormSubmit = async (data: CategoryFormValues) => {
 		await onSubmit(data, category?.id);
