@@ -1,7 +1,6 @@
 # 📊 Digital Store — Painel Administrativo
 
 <div align="center">
-  <img src="src/assets/images/logo-header.svg" alt="Digital Store Logo" height="50" />
   <br /><br />
 
   ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
