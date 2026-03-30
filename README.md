@@ -26,8 +26,8 @@ O projeto **Digital Store** é composto por **3 repositórios independentes** qu
 
 | Repositório | Descrição | Responsável por |
 |---|---|---|
-| **🖥️ digital-store-frontend** [https://github.com/CaioIan/digital-store-frontend] | Interface do consumidor final | Navegação de produtos, carrinho, checkout, gestão de pedidos e perfil do usuário |
-| **🔧 digital-store-api** [https://github.com/CaioIan/digital-store-api] | API RESTful | Autenticação, CRUD de produtos, gestão de pedidos, controle de estoque, processamento de pagamentos e lógica de negócio |
+| **🖥️ digital-store-frontend** https://github.com/Caio-Ian-Oliveira/digital-store-frontend-client/tree/stable-version-v1 | Interface do consumidor final | Navegação de produtos, carrinho, checkout, gestão de pedidos e perfil do usuário |
+| **🔧 digital-store-api** https://github.com/Caio-Ian-Oliveira/digital-store-api/tree/stable-version-v1 | API RESTful | Autenticação, CRUD de produtos, gestão de pedidos, controle de estoque, processamento de pagamentos e lógica de negócio |
 | **📊 digital-store-admin** (este repo) | Painel administrativo | Cadastro/edição de produtos, gestão de categorias/marcas, visualização de pedidos e métricas do negócio |
 
 ### Como os projetos se conectam
